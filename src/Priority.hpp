@@ -4,46 +4,41 @@
 #include <iostream>
 #include <thread>
 
-// Shortest Job First
-class SJF : public Scheduler {
+class Priority : public Scheduler {
   public:
-    SJF(std::vector<Process> processList) : Scheduler(processList) {}
-    ~SJF() override = default;
+    Priority(std::vector<Process> processList) : Scheduler(processList) {}
 
-  private:
     Process* selectProcess() override {
         if (m_ReadyQueue.empty())
             return nullptr;
 
-        // Copy ready queue
         std::vector<Process*> temp;
         while (!m_ReadyQueue.empty()) {
             temp.push_back(m_ReadyQueue.front());
             m_ReadyQueue.pop();
         }
 
-        // Sort by remaining time
+        // Sort by highest priority
         for (int i = 0; i < temp.size(); i++) {
             for (int j = i + 1; j < temp.size(); j++) {
-                if (temp[i]->remainingTime > temp[j]->remainingTime) {
+                if (temp[i]->priority < temp[j]->priority) {
                     std::swap(temp[i], temp[j]);
                 }
             }
         }
 
-        Process* shortest = temp.front();
+        for (auto* p : temp)
+            m_ReadyQueue.push(p);
 
-        // add all other processes
-        for (auto* p : temp) {
-            if (p != shortest)
-                m_ReadyQueue.push(p);
-        }
+        Process* highestPriority = m_ReadyQueue.front();
+        m_ReadyQueue.pop();
 
-        return shortest;
+        std::cout << "Selected process: " << highestPriority->name << '\n';
+        return highestPriority;
     }
 
     void executeProcess(Process* process) override {
-        while (process->remainingTime > 0) {
+        if (process->remainingTime > 0) {
             m_TimePassed++;
             std::cout << "[" << m_TimePassed << "] Executing " << process->name << " ("
                       << process->remainingTime << "/" << process->burstTime << ")\n";
@@ -51,15 +46,16 @@ class SJF : public Scheduler {
 
             // sleep
             std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-
-            // Manage arrived processes
-            addArrivedProcesses();
         }
 
         // Process finished
-        if (process->remainingTime <= 0)
+        if (process->remainingTime <= 0) {
             finish(process);
+            return;
+        }
+
+        m_ReadyQueue.push(process);
     }
 
-    std::string getName() const override { return "SJF"; }
+    std::string getName() const override { return "Priority"; }
 };

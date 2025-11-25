@@ -1,23 +1,143 @@
 #include "FCFS.hpp"
+#include "Multilevel.hpp"
+#include "Priority.hpp"
+#include "RR.hpp"
 #include "SJF.hpp"
+#include "SRTF.hpp"
+
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
+
+const int PROCESS_AMOUNT = 10;
+const bool EXPORT_TO_CSV = true;
+const std::string FILE_NAME = "scheduler_data.csv";
+
+void generateRandomProcess(std::vector<Process>& processList) {
+    for (int i = 0; i < PROCESS_AMOUNT; i++) {
+        std::string name = "P" + std::to_string(i + 1);
+        int arrivalTime = rand() % 20 + 1;
+        int burstTime = rand() % 20 + 1;
+        // std::cout << name << " " << arrivalTime << " " << burstTime << std::endl;
+        processList.emplace_back(name, arrivalTime, burstTime);
+    }
+}
+
+int handleMenu() {
+    std::cout << "Select Algorithm: \n";
+    std::cout << "1. FCFS (First Come First Served)\n";
+    std::cout << "2. SJF (Shortest Job First)\n";
+    std::cout << "3. SRTF (Shortest Remaining Time First)\n";
+    std::cout << "4. RR (Round Robin)\n";
+    std::cout << "5. Priority\n";
+    std::cout << "6. MLQ (Multilevel Queue)\n";
+    std::cout << "7. Run All\n";
+    std::cout << "0. Exit\n";
+    std::cout << "Select: ";
+
+    int selected;
+    std::cin >> selected;
+    return selected;
+}
+
+void runScheduler(Scheduler& scheduler, std::string& file) {
+    scheduler.run();
+
+    if (EXPORT_TO_CSV) {
+        scheduler.exportToCSV(file);
+    }
+}
+
+void runAllSchedulers(std::vector<Process> processList, std::string& file) {
+    FCFS fcfs(processList);
+    SJF sjf(processList);
+    SRTF srtf(processList);
+    RR rr(processList);
+    Priority priority(processList);
+    Multilevel mlfq(processList);
+
+    runScheduler(fcfs, file);
+    runScheduler(sjf, file);
+    runScheduler(srtf, file);
+    runScheduler(rr, file);
+    runScheduler(priority, file);
+    runScheduler(mlfq, file);
+}
 
 int main() {
+    srand(time(0));
+
+    // std::vector<Process> processList;
+    // generateRandomProcess(processList);
+
     std::vector<Process> processList = {
-        {"P1", 5, 2}, // Arrival time: 5, Burst time: 2
-        {"P2", 3, 5}, // Arrival time: 3, Burst time: 5
-        {"P3", 2, 7}, // Arrival time: 2, Burst time: 7
+        {"P1", 5, 2, PriorityLevel::HIGH},   // Arrival time: 5, Burst time: 2
+        {"P2", 3, 5, PriorityLevel::MEDIUM}, // Arrival time: 3, Burst time: 5
+        {"P3", 2, 7, PriorityLevel::LOW},    // Arrival time: 2, Burst time: 7
     };
 
     // FCFS : P3, P2, P1
     // SJF : P1, P2, P3
 
-    FCFS fcfs(processList);
-    fcfs.run();
-    // fcfs.exportToCSV();
+    std::string data;
+    bool running = true;
 
-    // SJF sjf(processList);
-    // sjf.run();
-    // sjf.exportToCSV();
+    while (running) {
+        int selected = handleMenu();
+        switch (selected) {
+            case 1: {
+                FCFS fcfs(processList);
+                runScheduler(fcfs, data);
+                break;
+            }
+            case 2: {
+                SJF sjf(processList);
+                runScheduler(sjf, data);
+                break;
+            }
+            case 3: {
+                SRTF srtf(processList);
+                runScheduler(srtf, data);
+                break;
+            }
+            case 4: {
+                RR rr(processList);
+                runScheduler(rr, data);
+                break;
+            }
+
+            case 5: {
+                Priority priority(processList);
+                runScheduler(priority, data);
+                break;
+            }
+
+            case 6: {
+                Multilevel mlq(processList);
+                runScheduler(mlq, data);
+                break;
+            }
+
+            case 7: {
+                runAllSchedulers(processList, data);
+                break;
+            }
+
+            case 0:
+                running = false;
+                break;
+            default:
+                std::cout << "Invalid option\n";
+                break;
+        }
+    }
+
+    if (EXPORT_TO_CSV) {
+        std::ofstream file(FILE_NAME);
+        file << "Algorithm,PID,ArrivalTime,BurstTime,CompletionTime,WaitingTime,TurnaroundTime\n";
+        file << data;
+        file.close();
+    }
 
     return 0;
 }

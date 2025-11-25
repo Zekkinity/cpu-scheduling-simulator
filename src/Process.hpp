@@ -2,6 +2,12 @@
 
 #include <string>
 
+enum class PriorityLevel {
+    LOW = 0,
+    MEDIUM,
+    HIGH,
+};
+
 struct Process {
     std::string name;
     int burstTime;   // Time needed in CPU
@@ -14,7 +20,9 @@ struct Process {
 
     bool finished = false;
 
-    Process(std::string name, float arrivalTime, float burstTime) :
-        name(name), arrivalTime(arrivalTime), burstTime(burstTime) {}
-};
+    PriorityLevel priority = PriorityLevel::MEDIUM;
 
+    Process(std::string name, float arrivalTime, float burstTime,
+            PriorityLevel priority = PriorityLevel::MEDIUM) :
+        name(name), arrivalTime(arrivalTime), burstTime(burstTime), priority(priority) {}
+};

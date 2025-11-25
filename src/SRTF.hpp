@@ -4,11 +4,11 @@
 #include <iostream>
 #include <thread>
 
-// Shortest Job First
-class SJF : public Scheduler {
+// Shortest Remaining Time First
+class SRTF : public Scheduler {
   public:
-    SJF(std::vector<Process> processList) : Scheduler(processList) {}
-    ~SJF() override = default;
+    SRTF(std::vector<Process> processList) : Scheduler(processList) {}
+    ~SRTF() override = default;
 
   private:
     Process* selectProcess() override {
@@ -31,35 +31,37 @@ class SJF : public Scheduler {
             }
         }
 
-        Process* shortest = temp.front();
-
         // add all other processes
-        for (auto* p : temp) {
-            if (p != shortest)
-                m_ReadyQueue.push(p);
-        }
+        for (auto* p : temp)
+            m_ReadyQueue.push(p);
 
+        Process* shortest = m_ReadyQueue.front();
+        m_ReadyQueue.pop();
         return shortest;
     }
 
     void executeProcess(Process* process) override {
-        while (process->remainingTime > 0) {
+        if (process->remainingTime > 0) {
+            // In CPU
             m_TimePassed++;
             std::cout << "[" << m_TimePassed << "] Executing " << process->name << " ("
                       << process->remainingTime << "/" << process->burstTime << ")\n";
             process->remainingTime--;
 
-            // sleep
             std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
 
             // Manage arrived processes
-            addArrivedProcesses();
+            // addArrivedProcesses();
         }
 
         // Process finished
-        if (process->remainingTime <= 0)
+        if (process->remainingTime <= 0) {
             finish(process);
+            return;
+        }
+
+        m_ReadyQueue.push(process);
     }
 
-    std::string getName() const override { return "SJF"; }
+    std::string getName() const override { return "SRTF"; }
 };
