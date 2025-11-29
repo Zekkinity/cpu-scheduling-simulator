@@ -20,7 +20,7 @@ class Scheduler {
     virtual Process* selectProcess();
     virtual void executeProcess(Process* process);
 
-    void addArrivedProcesses();
+    virtual void addArrivedProcesses();
     void finish(Process* process);
 
     virtual std::string getName() const = 0;

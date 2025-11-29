@@ -4,6 +4,7 @@
 #include "RR.hpp"
 #include "SJF.hpp"
 #include "SRTF.hpp"
+#include "CFS.hpp"
 
 #include <cstdlib>
 #include <ctime>
@@ -31,7 +32,8 @@ int handleMenu() {
     std::cout << "4. RR (Round Robin)\n";
     std::cout << "5. Priority\n";
     std::cout << "6. MLQ (Multilevel Queue)\n";
-    std::cout << "7. Run All\n";
+    std::cout << "7. CFS (Completely Fair Scheduler)\n";
+    std::cout << "8. Run All\n";
     std::cout << "0. Exit\n";
     std::cout << "Select: ";
 
@@ -55,6 +57,7 @@ void runAllSchedulers(std::vector<Process> processList, std::string& file) {
     RR rr(processList);
     Priority priority(processList);
     Multilevel mlfq(processList);
+    CFS cfs(processList);
 
     runScheduler(fcfs, file);
     runScheduler(sjf, file);
@@ -62,6 +65,7 @@ void runAllSchedulers(std::vector<Process> processList, std::string& file) {
     runScheduler(rr, file);
     runScheduler(priority, file);
     runScheduler(mlfq, file);
+    runScheduler(cfs, file);
 }
 
 int main() {
@@ -70,11 +74,18 @@ int main() {
     // std::vector<Process> processList;
     // generateRandomProcess(processList);
 
+    // std::vector<Process> processList = {
+    //     {"P1", 5, 2, PriorityLevel::HIGH},   // Arrival time: 5, Burst time: 2
+    //     {"P2", 3, 5, PriorityLevel::MEDIUM}, // Arrival time: 3, Burst time: 5
+    //     {"P3", 2, 7, PriorityLevel::LOW},    // Arrival time: 2, Burst time: 7
+    //     {"P4", 6, 3, PriorityLevel::MEDIUM}, // Arrival time: 6, Burst time: 3
+    // };
+
     std::vector<Process> processList = {
-        {"P1", 5, 2, PriorityLevel::HIGH},   // Arrival time: 5, Burst time: 2
-        {"P2", 3, 5, PriorityLevel::MEDIUM}, // Arrival time: 3, Burst time: 5
-        {"P3", 2, 7, PriorityLevel::LOW},    // Arrival time: 2, Burst time: 7
-    };
+        {"P1", 1, 2, PriorityLevel::MEDIUM}, {"P2", 2, 1, PriorityLevel::LOW},
+        {"P3", 3, 1, PriorityLevel::HIGH},   {"P4", 4, 2, PriorityLevel::MEDIUM},
+        {"P5", 5, 1, PriorityLevel::LOW},    {"P6", 6, 2, PriorityLevel::HIGH},
+        {"P7", 7, 1, PriorityLevel::MEDIUM}, {"P8", 8, 1, PriorityLevel::LOW}};
 
     // FCFS : P3, P2, P1
     // SJF : P1, P2, P3
@@ -119,6 +130,12 @@ int main() {
             }
 
             case 7: {
+                CFS cfs(processList);
+                runScheduler(cfs, data);
+                break;
+            }
+
+            case 8: {
                 runAllSchedulers(processList, data);
                 break;
             }

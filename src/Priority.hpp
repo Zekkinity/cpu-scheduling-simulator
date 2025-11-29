@@ -21,7 +21,7 @@ class Priority : public Scheduler {
         // Sort by highest priority
         for (int i = 0; i < temp.size(); i++) {
             for (int j = i + 1; j < temp.size(); j++) {
-                if (temp[i]->priority < temp[j]->priority) {
+                if (temp[i]->priority > temp[j]->priority) {
                     std::swap(temp[i], temp[j]);
                 }
             }

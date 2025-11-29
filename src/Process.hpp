@@ -2,11 +2,7 @@
 
 #include <string>
 
-enum class PriorityLevel {
-    LOW = 0,
-    MEDIUM,
-    HIGH,
-};
+enum PriorityLevel { HIGH = 1, MEDIUM = 2, NORMAL = 4, LOW = 12 };
 
 struct Process {
     std::string name;
@@ -21,6 +17,7 @@ struct Process {
     bool finished = false;
 
     PriorityLevel priority = PriorityLevel::MEDIUM;
+    long vruntime = 0; // Virtual runtime, lower value means higher priority
 
     Process(std::string name, float arrivalTime, float burstTime,
             PriorityLevel priority = PriorityLevel::MEDIUM) :

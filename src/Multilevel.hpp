@@ -23,5 +23,5 @@ class Multilevel : public Scheduler {
     std::queue<Process*> m_InteractiveQueue; // Medium priority
     std::queue<Process*> m_BatchQueue;       // Low Priority
 
-    int m_Quantum = 2;
+    int m_Quantum = 1;
 };

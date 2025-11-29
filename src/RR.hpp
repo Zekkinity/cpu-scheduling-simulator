@@ -40,5 +40,5 @@ class RR : public Scheduler {
     std::string getName() const override { return "RR"; }
 
   private:
-    double m_Quantum = 2;
+    double m_Quantum = 1;
 };
