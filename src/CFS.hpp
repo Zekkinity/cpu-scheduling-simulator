@@ -15,17 +15,40 @@ class CFS : public Scheduler {
   private:
     std::string getName() const override { return "CFS"; }
 
-    Process* selectProcess() override;
-
     void addArrivedProcesses() override;
+    Process* selectProcess() override;
     void executeProcess(Process* process) override;
 
-    void updateRuntime(Process* process);
-    long getLowestVruntime();
+    void updateVruntime(Process* p);
 
-    void printStats();
+    int getWeight(int nice);
+    int getTotalWeight();
+    double getMinVruntime() const;
+    int computeSlice(Process* p);
 
   private:
-    using Key = std::pair<long, std::string>;
+    // NICE is a value of how nice a process is to others, so a low nice value equals to high
+    // priority
+
+    // The nice value is designed to be like:
+    // down by 1 = 10% more CPU
+    // up by 1 = 10% less CPU
+
+    // RANGE [-20, 19]
+    const int MIN_NICE = -20;
+    const int MAX_NICE = 19;
+
+    // Default nice of a process is 0
+    const int DEFAULT_NICE = 0;
+
+    // const int SCHED_LATENCY = 48; // too high
+
+    const int SCHED_LATENCY = 32; // This is even better for Waiting Times
+    // const int SCHED_LATENCY = 24; // This one provides results better than Dynamic RR
+
+    // const int SCHED_LATENCY = 12; // Too low, GOOD for fairness
+    const int MIN_GRANULARITY = 6;
+
+    using Key = std::pair<double, std::string>;
     std::map<Key, Process*> m_RunQueue; // {vruntime, pid} -> process*
 };

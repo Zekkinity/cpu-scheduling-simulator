@@ -1,10 +1,10 @@
+#include "CFS.hpp"
 #include "FCFS.hpp"
 #include "Multilevel.hpp"
 #include "Priority.hpp"
 #include "RR.hpp"
 #include "SJF.hpp"
 #include "SRTF.hpp"
-#include "CFS.hpp"
 
 #include <cstdlib>
 #include <ctime>
@@ -30,10 +30,12 @@ int handleMenu() {
     std::cout << "2. SJF (Shortest Job First)\n";
     std::cout << "3. SRTF (Shortest Remaining Time First)\n";
     std::cout << "4. RR (Round Robin)\n";
-    std::cout << "5. Priority\n";
-    std::cout << "6. MLQ (Multilevel Queue)\n";
-    std::cout << "7. CFS (Completely Fair Scheduler)\n";
-    std::cout << "8. Run All\n";
+    std::cout << "5. RR (Dynamic)\n";
+    std::cout << "6. RR (Dynamic 2)\n";
+    std::cout << "7. Priority\n";
+    std::cout << "8. MLQ (Multilevel Queue)\n";
+    std::cout << "9. CFS (Completely Fair Scheduler)\n";
+    std::cout << "10. Run All\n";
     std::cout << "0. Exit\n";
     std::cout << "Select: ";
 
@@ -55,6 +57,8 @@ void runAllSchedulers(std::vector<Process> processList, std::string& file) {
     SJF sjf(processList);
     SRTF srtf(processList);
     RR rr(processList);
+    RR rrd(processList, RRType::DYNAMIC);
+    RR rrd2(processList, RRType::DYNAMIC2);
     Priority priority(processList);
     Multilevel mlfq(processList);
     CFS cfs(processList);
@@ -63,6 +67,8 @@ void runAllSchedulers(std::vector<Process> processList, std::string& file) {
     runScheduler(sjf, file);
     runScheduler(srtf, file);
     runScheduler(rr, file);
+    runScheduler(rrd, file);
+    runScheduler(rrd2, file);
     runScheduler(priority, file);
     runScheduler(mlfq, file);
     runScheduler(cfs, file);
@@ -81,11 +87,19 @@ int main() {
     //     {"P4", 6, 3, PriorityLevel::MEDIUM}, // Arrival time: 6, Burst time: 3
     // };
 
+    // short_workload
+    // std::vector<Process> processList = {
+    //     {"P1", 1, 2, PriorityLevel::MEDIUM}, {"P2", 2, 1, PriorityLevel::LOW},
+    //     {"P3", 3, 1, PriorityLevel::HIGH},   {"P4", 4, 2, PriorityLevel::MEDIUM},
+    //     {"P5", 5, 1, PriorityLevel::LOW},    {"P6", 6, 2, PriorityLevel::HIGH},
+    //     {"P7", 7, 1, PriorityLevel::MEDIUM}, {"P8", 8, 1, PriorityLevel::LOW}};
+
+    // workload_mixed
     std::vector<Process> processList = {
-        {"P1", 1, 2, PriorityLevel::MEDIUM}, {"P2", 2, 1, PriorityLevel::LOW},
-        {"P3", 3, 1, PriorityLevel::HIGH},   {"P4", 4, 2, PriorityLevel::MEDIUM},
-        {"P5", 5, 1, PriorityLevel::LOW},    {"P6", 6, 2, PriorityLevel::HIGH},
-        {"P7", 7, 1, PriorityLevel::MEDIUM}, {"P8", 8, 1, PriorityLevel::LOW}};
+        {"P1", 0, 20, PriorityLevel::HIGH}, {"P2", 10, 25, PriorityLevel::MEDIUM},
+        {"P3", 10, 7, PriorityLevel::LOW},  {"P4", 15, 15, PriorityLevel::LOW},
+        {"P5", 21, 4, PriorityLevel::LOW},  {"P6", 30, 9, PriorityLevel::LOW},
+        {"P7", 35, 3, PriorityLevel::LOW},  {"P8", 37, 20, PriorityLevel::LOW}};
 
     // FCFS : P3, P2, P1
     // SJF : P1, P2, P3
@@ -118,24 +132,36 @@ int main() {
             }
 
             case 5: {
+                RR rrd(processList, RRType::DYNAMIC);
+                runScheduler(rrd, data);
+                break;
+            }
+
+            case 6: {
+                RR rrd2(processList, RRType::DYNAMIC2);
+                runScheduler(rrd2, data);
+                break;
+            }
+
+            case 7: {
                 Priority priority(processList);
                 runScheduler(priority, data);
                 break;
             }
 
-            case 6: {
+            case 8: {
                 Multilevel mlq(processList);
                 runScheduler(mlq, data);
                 break;
             }
 
-            case 7: {
+            case 9: {
                 CFS cfs(processList);
                 runScheduler(cfs, data);
                 break;
             }
 
-            case 8: {
+            case 10: {
                 runAllSchedulers(processList, data);
                 break;
             }

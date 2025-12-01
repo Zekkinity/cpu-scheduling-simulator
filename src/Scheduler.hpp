@@ -32,6 +32,6 @@ class Scheduler {
 
     std::vector<Process> m_ProcessList;
 
-    // const int SLEEP_TIME = 600;
-    const int SLEEP_TIME = 0;
+    const int SLEEP_TIME = 600;
+    // const int SLEEP_TIME = 0;
 };

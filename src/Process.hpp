@@ -17,9 +17,15 @@ struct Process {
     bool finished = false;
 
     PriorityLevel priority = PriorityLevel::MEDIUM;
-    long vruntime = 0; // Virtual runtime, lower value means higher priority
+    double vruntime = 0;
+
+    int nice = 0;
 
     Process(std::string name, float arrivalTime, float burstTime,
-            PriorityLevel priority = PriorityLevel::MEDIUM) :
-        name(name), arrivalTime(arrivalTime), burstTime(burstTime), priority(priority) {}
+            PriorityLevel priority = PriorityLevel::MEDIUM, int nice = 0) :
+        name(name),
+        arrivalTime(arrivalTime),
+        burstTime(burstTime),
+        priority(priority),
+        nice(nice) {}
 };
