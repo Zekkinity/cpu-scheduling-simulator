@@ -27,7 +27,7 @@ void CFS::executeProcess(Process* process) {
     std::cout << "Slice: " << slice << "\n";
 
     for (int i = 0; i < slice; i++) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(0));
+        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
 
         addArrivedProcesses();
 
