@@ -26,6 +26,11 @@ void Scheduler::run() {
 
         Process* currentProcess = selectProcess(); // Get process
         if (currentProcess) {
+            if (currentProcess->isNew) {
+                currentProcess->startTime = m_TimePassed;
+                currentProcess->responseTime = m_TimePassed - currentProcess->arrivalTime;
+                currentProcess->isNew = false;
+            }
             executeProcess(currentProcess); // Put in CPU
         } else {
             m_TimePassed++;
@@ -81,6 +86,7 @@ void Scheduler::finish(Process* process) {
     // Complete process
     process->finished = true;
     process->completionTime = m_TimePassed;
+    // process->completionTime = process->arrivalTime + process->burstTime + process->waitingTime;
     process->turnAroundTime = process->completionTime - process->arrivalTime;
     process->waitingTime = process->turnAroundTime - process->burstTime;
 
@@ -100,6 +106,7 @@ void Scheduler::exportToCSV(std::string& file) {
     for (const auto& p : m_ProcessList) {
         file += getName() + "," + p.name + "," + std::to_string(p.arrivalTime) + "," +
                 std::to_string(p.burstTime) + "," + std::to_string(p.completionTime) + "," +
-                std::to_string(p.waitingTime) + "," + std::to_string(p.turnAroundTime) + "\n";
+                std::to_string(p.waitingTime) + "," + std::to_string(p.turnAroundTime) + "," +
+                std::to_string(p.responseTime) + "\n";
     }
 }

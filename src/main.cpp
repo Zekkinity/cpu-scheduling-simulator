@@ -95,11 +95,19 @@ int main() {
     //     {"P7", 7, 1, PriorityLevel::MEDIUM}, {"P8", 8, 1, PriorityLevel::LOW}};
 
     // workload_mixed
+    // std::vector<Process> processList = {
+    //     {"P1", 0, 20, PriorityLevel::HIGH}, {"P2", 10, 25, PriorityLevel::MEDIUM},
+    //     {"P3", 10, 7, PriorityLevel::LOW},  {"P4", 15, 15, PriorityLevel::LOW},
+    //     {"P5", 21, 4, PriorityLevel::LOW},  {"P6", 30, 9, PriorityLevel::LOW},
+    //     {"P7", 35, 3, PriorityLevel::LOW},  {"P8", 37, 20, PriorityLevel::LOW}};
+
     std::vector<Process> processList = {
-        {"P1", 0, 20, PriorityLevel::HIGH}, {"P2", 10, 25, PriorityLevel::MEDIUM},
-        {"P3", 10, 7, PriorityLevel::LOW},  {"P4", 15, 15, PriorityLevel::LOW},
-        {"P5", 21, 4, PriorityLevel::LOW},  {"P6", 30, 9, PriorityLevel::LOW},
-        {"P7", 35, 3, PriorityLevel::LOW},  {"P8", 37, 20, PriorityLevel::LOW}};
+        { "P1", 0, 30, PriorityLevel::MEDIUM },  { "P2", 0, 3, PriorityLevel::LOW },
+        { "P3", 0, 6, PriorityLevel::LOW },      { "P4", 5, 20, PriorityLevel::HIGH },
+        { "P5", 5, 2, PriorityLevel::LOW },      { "P6", 10, 40, PriorityLevel::MEDIUM },
+        { "P7", 10, 5, PriorityLevel::LOW },     { "P8", 12, 1, PriorityLevel::LOW },
+        { "P9", 12, 25, PriorityLevel::MEDIUM }, { "P10", 15, 4, PriorityLevel::LOW },
+    };
 
     // FCFS : P3, P2, P1
     // SJF : P1, P2, P3
@@ -177,7 +185,8 @@ int main() {
 
     if (EXPORT_TO_CSV) {
         std::ofstream file(FILE_NAME);
-        file << "Algorithm,PID,ArrivalTime,BurstTime,CompletionTime,WaitingTime,TurnaroundTime\n";
+        file << "Algorithm,PID,ArrivalTime,BurstTime,CompletionTime,WaitingTime,TurnaroundTime,"
+                "ResponseTime\n";
         file << data;
         file.close();
     }

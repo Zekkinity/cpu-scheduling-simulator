@@ -14,6 +14,10 @@ struct Process {
     int turnAroundTime; // time spent in CPU
     int waitingTime;    // Time from arrival to completion
 
+    int responseTime;
+    int startTime;
+    bool isNew = true;
+
     bool finished = false;
 
     PriorityLevel priority = PriorityLevel::MEDIUM;
